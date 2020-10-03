@@ -1,8 +1,7 @@
 (function() {
     'use strict';
-    $("body").css("backgroundColor", "lightgray");
     var h = $("<div>").css({
-        backgroundColor: "darkgray",
+        backgroundColor: "lightgray",
         borderRadius: "25px",
         padding: "1em"
     }).appendTo("body");
