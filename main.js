@@ -1,5 +1,6 @@
 (function() {
     'use strict';
+    $("body").css("backgroundColor", "lightgray");
     var h = $("<div>").css({
         backgroundColor: "darkgray",
         borderRadius: "25px",
