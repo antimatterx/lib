@@ -6,5 +6,5 @@
         padding: "1em"
     }).appendTo("body");
     $("<h1>").text($("title").text()).appendTo(h);
-    h.append("Hello, World!");
+    h.append("<hr>Hello, World!");
 })();
