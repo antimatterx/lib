@@ -13,8 +13,8 @@
     };
     for (var k in tools) {
         $("<a>", {
-            href: k
-        }).text(tools[k]).appendTo(h);
+            href: tools[k]
+        }).text(k).appendTo(h);
         h.append("<br>");
     };
 })();
