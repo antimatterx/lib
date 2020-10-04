@@ -22,7 +22,7 @@
     };
     for (var k in list) {
         $("<a>", {
-            href: list[k]
+            href: "https://antimatter-x.github.io/" + list[k]
         }).text(k).appendTo(h);
         h.append("<br>")
     };
