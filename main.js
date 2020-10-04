@@ -13,6 +13,7 @@
         borderRadius: "25px",
         padding: "1em"
     }).appendTo(h);
+    h.apped("Hello, World!<br>テストページです。")
     h.append("<hr>");
     //////////////////////////////////////////////////
     $("<h2>").text("my pages").appendTo(h);
