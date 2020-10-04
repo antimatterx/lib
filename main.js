@@ -9,7 +9,7 @@
     $("<h1>").text($("title").text()).appendTo(h);
     var desc = $("<div>").append("Hello, World!<br>テストページです。").css({
         backgroundColor: "darkgray",
-        fontSize: "12px",
+        fontSize: "14px",
         borderRadius: "25px",
         padding: "1em"
     }).appendTo(h);
