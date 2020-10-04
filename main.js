@@ -15,5 +15,6 @@
         $("<a>", {
             href: k
         }).text(tools[k]).appendTo(h);
+        h.append("<br>");
     };
 })();
