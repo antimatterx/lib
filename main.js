@@ -1,21 +1,18 @@
 (function() {
     'use strict';
+    //////////////////////////////////////////////////
     var h = $("<div>").css({
         backgroundColor: "lightgray",
         borderRadius: "25px",
         padding: "1em"
     }).appendTo("body");
     $("<h1>").text($("title").text()).appendTo(h);
-    h.append("<hr>Hello, World!");
-    $("<h2>").text("my tools").appendTo(h);
-    var tools = {
-        "test-page": "https://antimatter-x.github.io/lib/",
-        "JavaScript エディタ": "https://antimatter-x.github.io/editor/"
-    };
-    for (var k in tools) {
-        $("<a>", {
-            href: tools[k]
-        }).text(k).appendTo(h);
-        h.append("<br>");
-    };
+    var desc = $("<div>").text("Hello, World!").css({
+        backgroundColor: "darkgray",
+        fontSize: "10px",
+        borderRadius: "25px",
+        padding: "1em"
+    }).appendTo(h);
+    h.append("<hr>");
+    //////////////////////////////////////////////////
 })();
