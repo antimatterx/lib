@@ -9,11 +9,10 @@
     $("<h1>").text($("title").text()).appendTo(h);
     var desc = $("<div>").append("Hello, World!<br>テストページです。").css({
         backgroundColor: "darkgray",
-        fontSize: "14px",
+        fontSize: "12px",
         borderRadius: "25px",
         padding: "1em"
     }).appendTo(h);
-    h.append("Hello, World!<br>テストページです。")
     h.append("<hr>");
     //////////////////////////////////////////////////
     $("<h2>").text("my pages").appendTo(h);
