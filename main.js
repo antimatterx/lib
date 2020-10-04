@@ -6,7 +6,8 @@
         padding: "1em"
     }).appendTo("body");
     $("<h1>").text($("title").text()).appendTo(h);
-    h.append("<hr>Hello, World!<br>");
+    h.append("<hr>Hello, World!");
+    $("<h2>").text("my tools").appendTo(h);
     var tools = {
         "test-page": "https://antimatter-x.github.io/lib/",
         "JavaScript エディタ": "https://antimatter-x.github.io/editor/"
