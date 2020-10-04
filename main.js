@@ -15,4 +15,16 @@
     }).appendTo(h);
     h.append("<hr>");
     //////////////////////////////////////////////////
+    $("<h2>").text("my pages").appendTo(h);
+    var list = {
+        "test-page": "lib",
+        "JavaScript エディタ": "editor"
+    };
+    for (var k in list) {
+        $("<a>", {
+            href: list[k]
+        }).text(k).appendTo(h);
+        h.append("<br>")
+    };
+    //////////////////////////////////////////////////
 })();
