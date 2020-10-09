@@ -22,7 +22,7 @@
     ];
     var origin = location.protocol + "//" + location.host + "/";
     projects.forEach(function(v) {
-        var url = origin + v;
+        var url = origin + v + "/";
         $.get(url).done(function(data) {
             var title = data.match(/<title>(.*)<\/title>/)[1];
             $("<a>", {
