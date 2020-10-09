@@ -18,7 +18,8 @@
     $("<h2>").text("my pages").appendTo(h);
     var projects = [
         "lib",
-        "editor"
+        "editor",
+        "err"
     ];
     var origin = location.protocol + "//" + location.host + "/";
     projects.forEach(function(v) {
@@ -28,7 +29,10 @@
             $("<a>", {
                 href: url
             }).text(title).appendTo(h);
-            h.append("<br>");
+            h.append("<br>")
+        }).fail(function(err) {
+            console.info(err);
+            h.append("取得できませんでした。<br>");
         });
     });
     //////////////////////////////////////////////////
