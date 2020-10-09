@@ -16,15 +16,20 @@
     h.append("<hr>");
     //////////////////////////////////////////////////
     $("<h2>").text("my pages").appendTo(h);
-    var list = {
-        "test-page": "lib",
-        "JavaScript エディタ": "editor"
-    };
-    for (var k in list) {
-        $("<a>", {
-            href: "https://antimatter-x.github.io/" + list[k]
-        }).text(k).appendTo(h);
-        h.append("<br>")
-    };
+    var projects = [
+        "lib",
+        "editor"
+    ];
+    var origin = location.protocol + "//" + location.host + "/";
+    projects.forEach(function(v) {
+        var url = origin + v;
+        $.get(url).done(function(data) {
+            var title = data.match(/<title>(.*)<\/title>/)[1];
+            $("<a>", {
+                href: url
+            }).text(title).appendTo(h);
+            h.append("<br>");
+        });
+    });
     //////////////////////////////////////////////////
 })();
