@@ -24,15 +24,12 @@
     var origin = location.protocol + "//" + location.host + "/";
     projects.forEach(function(v) {
         var url = origin + v + "/";
-        $.get(url).done(function(data) {
+        $.get(url).done(function(data) { // 通信成功
             var title = data.match(/<title>(.*)<\/title>/)[1];
             $("<a>", {
                 href: url
             }).text(title).appendTo(h);
             h.append("<br>")
-        }).fail(function(err) {
-            console.info(err);
-            h.append("取得できませんでした。<br>");
         });
     });
     //////////////////////////////////////////////////
