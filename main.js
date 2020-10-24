@@ -6,7 +6,7 @@
         borderRadius: "25px",
         padding: "1em"
     }).appendTo("body");
-    $("<h1>").text($("title").text()).appednTo(h);
+    $("<h1>").text($("title").text()).appendTo(h);
     var desc = $("<div>").append("Hello, World!<br>テストページです。<br>どのライブラリが使えないのかチェックしたりできます。").css({
         backgroundColor: "darkgray",
         fontSize: "12px",
@@ -16,7 +16,7 @@
     h.append("<hr>");
     //--------------------------------------------------
     $("<h2>").text("Check your library").appendTo(h);
-    var library = [
+    var library = [ // ライブラリ
         "jQuery",
         "antimatterx"
     ];
@@ -25,7 +25,7 @@
         $("<div>").text(v + ": " + (a ? "OK" : "Error")).appendTo(h);
     });
     $("<h2>").text("my pages").appendTo(h);
-    var pages = [
+    var pages = [ // ページ
         "lib",
         "editor"
     ];
