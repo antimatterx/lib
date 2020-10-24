@@ -22,7 +22,8 @@
     ];
     library.forEach(function(v) {
         var a = window[v];
-        $("<div>").text(v + ": " + (a ? "OK" : "Error")).appendTo(h);
+        var elm = $("<div>").text(v + ": ").css("background-color", "slategray").appendTo(h);
+        $("<span>").text(a ? "OK" : "Error").css("color", a ? "lime" : "red").appendTo(elm);
     });
     $("<h2>").text("my pages").appendTo(h);
     var pages = [ // ページ
