@@ -36,7 +36,8 @@
         var url = origin + v + "/";
         $.get(url).done(function(d) {
             $("<a>", {
-                href: url
+                href: url,
+                target: "_blank"
             }).text(d.match(/<title>(.*)<\/title>/)[1]).appendTo(h);
             h.append("<br>");
         });
