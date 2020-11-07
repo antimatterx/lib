@@ -18,7 +18,8 @@
     $("<h2>").text("Check your library").appendTo(h);
     var library = [ // ライブラリ
         "jQuery",
-        "antimatterx"
+        "antimatterx",
+        "arrowfunc"
     ];
     library.forEach(function(v) {
         var a = window[v];
