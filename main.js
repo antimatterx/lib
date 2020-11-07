@@ -7,7 +7,7 @@
         padding: "1em"
     }).appendTo("body");
     $("<h1>").text($("title").text()).appendTo(h);
-    var desc = $("<div>").append("Hello, World!<br>テストページです。<br>どのライブラリが使えないのかチェックしたりできます。").css({
+    var desc = $("<div>").append("Hello, World!<br>テストページです。<br>どのライブラリが読み込めていないか確認できます。").css({
         backgroundColor: "darkgray",
         fontSize: "12px",
         borderRadius: "25px",
@@ -16,29 +16,28 @@
     h.append("<hr>");
     //--------------------------------------------------
     $("<h2>").text("Check your library").appendTo(h);
-    var library = [ // ライブラリ
+    var libs = [
         "jQuery",
-        "antimatterx",
-        "yaju1919"
+        "yaju1919",
+        "antimatterx"
     ];
-    library.forEach(function(v) {
-        var a = window[v];
-        var elm = $("<div>").text(v + ": ").css("background-color", "slategray").appendTo(h);
-        $("<span>").text(a ? "OK" : "Error").css("color", a ? "lime" : "red").appendTo(elm);
+    libs.forEach(function(v) {
+        var lib = window[v],
+            elm = $("<div>").text(v + ": ").css("background-color", "slategray").appendTo(h);
+        $("<span>").text(lib ? "OK" : "Error").css("color", a ? "lime" : "red").appendTo(elm);
     });
-    $("<h2>").text("my pages").appendTo(h);
-    var pages = [ // ページ
-        "lib",
-        "editor"
-    ];
-    var origin = location.protocol + "//" + location.host + "/";
+    $("<h2>").text("My Page").appendTo(h);
+    var pages = [
+            "lib",
+            "editor"
+        ],
+        origin = location.protocol + "//" + location.host + "/";
     pages.forEach(function(v) {
         var url = origin + v + "/";
         $.get(url).done(function(d) {
-            var title = d.match(/<title>(.*)<\/title>/)[1];
             $("<a>", {
                 href: url
-            }).text(title).appendTo(h);
+            }).text(d.match(/<title>(.*)<\/title>/)[1]).appendTo(h);
             h.append("<br>");
         });
     });
