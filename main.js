@@ -24,7 +24,7 @@
     libs.forEach(function(v) {
         var lib = window[v],
             elm = $("<div>").text(v + ": ").css("background-color", "slategray").appendTo(h);
-        $("<span>").text(lib ? "OK" : "Error").css("color", a ? "lime" : "red").appendTo(elm);
+        $("<span>").text(lib ? "OK" : "Error").css("color", lib ? "lime" : "red").appendTo(elm);
     });
     $("<h2>").text("My Page").appendTo(h);
     var pages = [
