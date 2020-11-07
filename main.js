@@ -19,7 +19,7 @@
     var library = [ // ライブラリ
         "jQuery",
         "antimatterx",
-        "arrowfunc"
+        "yaju1919"
     ];
     library.forEach(function(v) {
         var a = window[v];
