@@ -20,7 +20,7 @@
         "jQuery",
         "yaju1919",
         "antimatterx",
-        "cmdext"
+        "CmdExt"
     ];
     libs.forEach(function(v) {
         var lib = window[v],
