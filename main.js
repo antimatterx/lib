@@ -19,7 +19,8 @@
     var libs = [
         "jQuery",
         "yaju1919",
-        "antimatterx"
+        "antimatterx",
+        "cmdext"
     ];
     libs.forEach(function(v) {
         var lib = window[v],
