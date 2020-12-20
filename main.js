@@ -1,5 +1,6 @@
 (function() {
     'use strict';
+    return;
     //--------------------------------------------------
     var h = $("<div>").css({
         backgroundColor: "lightgray",
