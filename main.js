@@ -68,7 +68,8 @@
     $("<h2>").text("簡易コンソール").appendTo(content);
     (function(container, clearAllInterval) {
         var input = $(amx.addInputText(container[0], {
-                textarea: true
+                textarea: true,
+                save: "input"
             })).width("100%"),
             output = $("<div>").appendTo(container);
         amx.addButton(container[0], {
