@@ -52,7 +52,7 @@
             "jQuery",
             "antimatterx",
             "old_antimatterx",
-            "cmdext",
+            "CmdExt",
             "yaju1919"
         ], function(k) {
             var lib = window[k] !== undefined;
