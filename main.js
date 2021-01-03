@@ -2,51 +2,46 @@
     'use strict';
     //--------------------------------------------------
     var page = (function() {
-            var h = $("<div>").appendTo("body"),
-                header = $("<div>").append($("<h1>").text($("title").text()).css({
-                    marginRight: "auto",
-                    marginLeft: "10px"
-                })).css({
-                    display: "flex",
-                    width: "100%",
-                    height: "75px",
-                    color: "#10aa10",
-                    backgroundColor: "rgba(0, 0, 0, 0.25)",
-                    alignItems: "center"
-                }).appendTo(h),
-                desc = $("<div>").appendTo(h),
-                content = $("<div>").appendTo(h);
-            desc.add(content).css({
-                margin: "10px",
-                paddingTop: "5px",
-                paddingRight: "25px",
-                paddingBottom: "5px",
-                paddingLeft: "25px",
-                borderRadius: "10px",
-                color: "#e3e3e3",
-                backgroundColor: "rgba(255, 255, 255, 0.125)"
-            });
-            $("body").css({
-                margin: 0,
-                backgroundColor: "#3a3a3a"
-            }).add("html").add(h).css({
+        var h = $("<div>").appendTo("body"),
+            header = $("<div>").append($("<h1>").text($("title").text()).css({
+                padding: "5px",
+                margin: "0px auto 20px 10px"
+            })).css({
                 width: "100%",
-                height: "100%"
-            });
-            return {
-                h: h,
-                header: header,
-                desc: desc,
-                content: content
-            };
-        })(),
-        desc = page.desc,
-        content = page.content;
+                color: "#10aa10",
+                backgroundColor: "rgba(0, 0, 0, 0.25)",
+                wordWrap: "break-word"
+            }).appendTo(h),
+            desc = $("<div>"),
+            content = $("<div>");
+        desc.add(content).css({
+            margin: "10px",
+            paddingTop: "5px",
+            paddingRight: "25px",
+            paddingBottom: "5px",
+            paddingLeft: "25px",
+            borderRadius: "10px",
+            color: "#e3e3e3",
+            backgroundColor: "rgba(255, 255, 255, 0.125)"
+        }).appendTo(h);
+        $("body").css({
+            margin: 0,
+            backgroundColor: "#3a3a3a"
+        }).add("html").add(h).css({
+            width: "100%",
+            height: "100%"
+        });
+        return {
+            h: h,
+            header: header,
+            desc: desc,
+            content: content
+        };
+    })();
     //--------------------------------------------------
-    $("<h2>").text("Hello, World!").appendTo(desc);
-    $("<p>").html("テストページです。<br>どのライブラリが読み込めていないか確認できます。").appendTo(desc);
+    $("<h2>").text("hello, World!").add($("<p>").html("テストページです。<br>どのライブラリが読み込めていないか確認できます。")).appendTo(page.desc);
     //--------------------------------------------------
-    $("<h2>").text("ライブラリのチェック").appendTo(content);
+    $("<h2>").text("ライブラリのチェック").appendTo(page.content);
     (function(container) {
         amx.loop([
             "jQuery",
@@ -55,8 +50,12 @@
             "CmdExt",
             "yaju1919"
         ], function(k) {
-            var lib = window[k] !== undefined;
-            $("<div>").text(k + ": ").append($("<span>").text(lib ? "OK" : "Error").css("color", lib ? "lime" : "red")).appendTo(container);
+            var lib = (window[k] !== undefined);
+            $("<div>").text(k + ": ").append($("<span>").text(lib ? "OK" : "Error").css({
+                backgroundColor: lib ? "lightgreen" : "pink",
+                color: lib ? "green" : "red",
+                borderRadius: "5px"
+            })).appendTo(container);
         });
     })($("<div>").css({
         padding: "10px",
@@ -64,26 +63,43 @@
         display: "inline-block",
         backgroundColor: "rgba(255, 255, 255, 0.5)",
         borderRadius: "10px"
-    }).appendTo(content));
-    $("<h2>").text("簡易コンソール").appendTo(content);
+    }).appendTo(page.content));
+    //--------------------------------------------------
+    $("<h2>").text("簡易コンソール").appendTo(page.content);
     (function(container, clearAllInterval) {
         var input = $(amx.addInputText(container[0], {
-                textarea: true,
-                save: "input"
-            })).width("100%"),
-            output = $("<div>").appendTo(container);
-        amx.addButton(container[0], {
-            title: "クリア",
-            insertBefore: true,
-            click: function() {
-                output.empty();
-            }
-        })
+                save: "input",
+                textarea: true
+            })).css({
+                backgroundColor: "black",
+                color: "lightblue",
+                width: "100%",
+                maxHeight: $(window).height() / 3,
+                padding: "5px",
+                boxSizing: "border-box",
+                overflow: "visible scroll"
+            }),
+            output = $("<div>").css({
+                backgroundColor: "lightgray",
+                width: "100%",
+                maxHeight: $(window).height() / 3,
+                padding: "1em",
+                boxSizing: "border-box",
+                overflow: "visible scroll"
+            }).appendTo(container[0]),
+            clearBtn = amx.addButton(container[0], {
+                title: "クリア",
+                insertBefore: true,
+                click: function() {
+                    clearAllInterval();
+                    output.empty();
+                }
+            });
         amx.addButton(container[0], {
             title: "実行",
             insertBefore: true,
             click: function() {
-                output.empty();
+                clearBtn.click();
                 try {
                     console.log((0, eval)(input.val()));
                 } catch (e) {
@@ -108,7 +124,7 @@
                     };
                 })();
             });
-        })(function(str, back, color, symbol) {
+        })(function(str, back, color, symbol) { // addResult
             var line = $("<div>").css({
                     backgroundColor: back,
                     color: color,
@@ -128,8 +144,8 @@
                 textAlign: "center"
             }).appendTo(line);
             $("<div>").text(str).css("margin-left", "1em").appendTo(line);
-            //line.find("div").css("display", "inline-block");
-        }, { // back, color, symbol
+            line.find("div").css("display", "inline-block");
+        }, { // list
             log: ["white", "black", ""],
             error: ["pink", "red", "×"],
             warn: ["lightyellow", "orange", "▲"],
@@ -140,25 +156,30 @@
         color: "black",
         backgroundColor: "rgba(255, 255, 255, 0.5)",
         borderRadius: "10px"
-    }).appendTo(content), (function() {
+    }).appendTo(page.content), (function() { // clearAllInterval
         var setTimeout_copy = window.setTimeout,
-            setInterval_copy = window.setInterval;
-        var setIds = []; // 時間差関数のidを格納
+            setInterval_copy = window.setInterval,
+            setIds = []; // 時間差関数のidを格納
         window.setTimeout = function() {
-            var id = setTimeout_copy.apply(this, arguments);
+            var id = setTimeout_copy.apply(window, arguments);
             setIds.push(id);
             return id;
         };
         window.setInterval = function() {
-            var id = setInterval_copy.apply(this, arguments);
+            var id = setInterval_copy.apply(window, arguments);
             setIds.push(id);
             return id;
         };
         return function() { // 時間差関数を全てクリアする
-            while (setIds.length) clearInterval(setIds.pop());
+            while (setIds.length > 0) {
+                var clearId = setIds.pop();
+                clearTimeout(id);
+                clearInterval(id);
+            };
         };
     })());
     //--------------------------------------------------
+    page.content.append("<br>");
     $("h2").css("color", "#f5f5f5");
     //--------------------------------------------------
 })();
