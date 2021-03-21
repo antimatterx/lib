@@ -45,6 +45,7 @@
     (function(container) {
         amx.loop([
             "jQuery",
+            "$amx",
             "antimatterx",
             "old_antimatterx",
             "CmdExt",
