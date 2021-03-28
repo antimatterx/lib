@@ -48,6 +48,7 @@
             "$amx",
             "antimatterx",
             "old_antimatterx",
+            "$CmdExt",
             "CmdExt",
             "yaju1919"
         ], function(k) {
@@ -75,7 +76,9 @@
                 backgroundColor: "black",
                 color: "lightblue",
                 width: "100%",
-                maxHeight: $(window).height() / 3,
+                height: "500px",
+                maxWidth: "100%",
+                // maxHeight: $(window).height() / 3,
                 padding: "5px",
                 boxSizing: "border-box",
                 overflow: "visible scroll"
