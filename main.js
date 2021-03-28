@@ -82,7 +82,7 @@
                 padding: "5px",
                 boxSizing: "border-box",
                 overflow: "visible scroll"
-            }).on('click', function (e) {
+            }).on('click keyup', function (e) {
                 $(e.target).css('width', '100%');
             }),
             output = $("<div>").css({
