@@ -82,6 +82,8 @@
                 padding: "5px",
                 boxSizing: "border-box",
                 overflow: "visible scroll"
+            }).on('click', function (e) {
+                $(e.target).css('width', '100%');
             }),
             output = $("<div>").css({
                 backgroundColor: "lightgray",
