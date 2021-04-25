@@ -45,6 +45,7 @@
     (function(container) {
         amx.loop([
             "jQuery",
+            "m",
             "awx",
             "$$amx",
             "$amx",
