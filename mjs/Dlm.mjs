@@ -114,14 +114,14 @@ export class Dlm {
   }
 
   once(type, listener) {
-    return this._on(type, original => {
+    return this._on(type, listener, original => {
       listener({ target: this, original })
       this.off(type, listener)
     })
   }
 
   on(type, listener) {
-    return this._on(type, original => void listener({ target: this, original }))
+    return this._on(type, listener, original => void listener({ target: this, original }))
   }
 
   off(type, listener) {
