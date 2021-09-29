@@ -1,4 +1,4 @@
-export class DlmStore extends Map {
+export class SharqStore extends Map {
   constructor(target) {
     super()
 
@@ -10,15 +10,15 @@ export class DlmStore extends Map {
   }
 }
 
-export class Dlm {
+export class Sharq {
   constructor(element) {
     this._element = element
     this._eventData = new Map
-    this._storeData = new DlmStore(this)
+    this._storeData = new SharqStore(this)
   }
 
   static new(query) {
-    return new Dlm(
+    return new Sharq(
       query instanceof Element || query === window ? query
         : query.startsWith('<') && query.endsWith('>') ? document.createElement(query.slice(1, -1))
           : document.querySelector(query)
@@ -34,7 +34,7 @@ export class Dlm {
   }
 
   to(targetElement, type = 'append') {
-    if (targetElement instanceof Dlm) {
+    if (targetElement instanceof Sharq) {
       targetElement = targetElement._element
     }
 
