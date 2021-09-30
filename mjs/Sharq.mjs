@@ -132,7 +132,7 @@ export class Sharq extends Array {
     return this
   }
 
-  appendTo(selector) {
+  prependTo(selector) {
     const sharq = new Sharq(selector)
 
     for (const target of this) {
