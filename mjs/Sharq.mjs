@@ -1,6 +1,4 @@
-//@ts-check
-
-class SharqStore extends Map {
+export class SharqStore extends Map {
   constructor(target) {
     super()
 
@@ -12,7 +10,7 @@ class SharqStore extends Map {
   }
 }
 
-class Sharq extends Array {
+export class Sharq extends Array {
   static _HTML_STRING_MATCH = /^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i
   static _CSS_ID_SELECTOR = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]+))$/
 
