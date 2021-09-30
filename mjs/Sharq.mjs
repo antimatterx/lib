@@ -1,4 +1,6 @@
-export class SharqStore extends Map {
+//@ts-check
+
+class SharqStore extends Map {
   constructor(target) {
     super()
 
@@ -10,36 +12,141 @@ export class SharqStore extends Map {
   }
 }
 
-export class Sharq {
-  constructor(element) {
-    this._element = element
-    this._eventData = new Map
-    this._storeData = new SharqStore(this)
+class Sharq extends Array {
+  static _HTML_STRING_MATCH = /^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i
+  static _CSS_ID_SELECTOR = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]+))$/
+
+  constructor(selector = void undefined) {
+    super()
+
+    this._store = new SharqStore(this)
+
+    if (typeof selector === 'undefined') {
+      return this
+    }
+
+    if (typeof selector === 'string') {
+      if (selector.startsWith('<') && selector.endsWith('>') && selector.length > 2) {
+        const htmlStringMatch = selector.match(Sharq._HTML_STRING_MATCH)
+
+        if (htmlStringMatch) {
+          this.push(document.createElement(htmlStringMatch[1]))
+        }
+      } else if (Sharq._CSS_ID_SELECTOR.test(selector)) {
+        const element = document.getElementById(selector)
+
+        if (element) {
+          this.push(element)
+        }
+      } else {
+        for (const element of document.querySelectorAll(selector)) {
+          this.push(element)
+        }
+      }
+    } else if (Sharq._isIterable(selector)) {
+      for (const target of selector) {
+        this.push(target)
+      }
+    } else {
+      this.push(selector)
+    }
   }
 
-  static new(query) {
-    return new Sharq(
-      query instanceof Element || query === window ? query
-        : query.startsWith('<') && query.endsWith('>') ? document.createElement(query.slice(1, -1))
-          : document.querySelector(query)
-    )
+  static _isIterable(obj) {
+    return typeof obj?.[Symbol.iterator] === 'function'
+  }
+
+  static _isWindow(obj) {
+    return typeof obj !== 'undefined' && obj?.window === obj
   }
 
   store() {
-    return this._storeData
+    return this._store
   }
 
-  get() {
-    return this._element
+  storeSize() {
+    return this._store.size
   }
 
-  to(targetElement, type = 'append') {
-    if (targetElement instanceof Sharq) {
-      targetElement = targetElement._element
+  storeClear() {
+    this._store.clear()
+
+    return this
+  }
+
+  storeDelete(key) {
+    this._store.delete(key)
+
+    return this
+  }
+
+  storeGet(key) {
+    this._store.get(key)
+
+    return this
+  }
+
+  storeHas(key) {
+    return this._store.has(key)
+  }
+
+  storeSet(key, value) {
+    this._store.set(key, value)
+
+    return this
+  }
+
+  do(func) {
+    func(this)
+
+    return this
+  }
+
+  get(index = 0) {
+    return this[index]
+  }
+
+  eq(index = 0) {
+    return new Sharq(this[index])
+  }
+
+  to(targetNode, type = 'append') {
+    if (type === 'append' || type === 'prepend' || type === 'before' || type === 'after') {
+      for (const target of this) {
+        targetNode[type](target)
+      }
     }
 
-    if (type === 'append' || type === 'prepend' || type === 'before' || type === 'after') {
-      targetElement[type](this._element)
+    return this
+  }
+
+  appendTo(parentNode) {
+    for (const target of this) {
+      parentNode.append(target)
+    }
+
+    return this
+  }
+
+  prependTo(parentNode) {
+    for (const target of this) {
+      parentNode.prepend(target)
+    }
+
+    return this
+  }
+
+  insertBefore(targetNode) {
+    for (const target of this) {
+      targetNode.before(target)
+    }
+
+    return this
+  }
+
+  insertAfter(targetNode) {
+    for (const target of this) {
+      targetNode.after(target)
     }
 
     return this
@@ -47,93 +154,33 @@ export class Sharq {
 
   text(value = void undefined) {
     if (typeof value === 'undefined') {
-      return this._element.textContent
+      const results = []
+
+      for (const target of this) {
+        results.push(Sharq._isWindow(target) ? void undefined : target.textContent)
+      }
+
+      return results.length === 1 ? results[0] : results
     }
 
-    this._element.textContent = value
+    if (typeof value === 'string') {
+      for (const target of this) {
+        if (!Sharq._isWindow(target)) {
+          target.textContent = value
+        }
+      }
+    } else if (Sharq._isIterable(value)) {
+      let i = 0
 
-    return this
-  }
+      for (const v of value) {
+        const target = this[i++]
 
-  value(value = void undefined) {
-    if (typeof value === 'undefined') {
-      return this._element.value
-    }
+        if (!target) {
+          break
+        }
 
-    this._element.value = value
-
-    return this
-  }
-
-  prop(propertiesOrPropertyName) {
-    if (typeof propertiesOrPropertyName === 'string') {
-      return this._element[propertiesOrPropertyName]
-    }
-
-    for (const [k, v] of Object.entries(propertiesOrPropertyName)) {
-      this._element[k] = v
-    }
-
-    return this
-  }
-
-  attr(attributesOrQualifiedName) {
-    if (typeof attributesOrQualifiedName === 'string') {
-      return this._element.getAttribute(attributesOrQualifiedName)
-    }
-
-    for (const v of Object.entries(attributesOrQualifiedName)) {
-      this._element.setAttribute(...v)
-    }
-
-    return this
-  }
-
-  style(styles) {
-    for (const [k, v] of Object.entries(styles)) {
-      this._element.style[k] = v
-    }
-
-    return this
-  }
-
-  _on(type, listener, listenerWrapper) {
-    if (!this._eventData.has(type)) {
-      this._eventData.set(type, new WeakMap)
-    }
-
-    const listenerData = this._eventData.get(type)
-
-    if (!listenerData.has(listener)) {
-      listenerData.set(listener, listenerWrapper)
-    }
-
-    this._element.addEventListener(type, listenerData.get(listener))
-
-    return this
-  }
-
-  once(type, listener) {
-    return this._on(type, listener, original => {
-      listener({ target: this, original })
-      this.off(type, listener)
-    })
-  }
-
-  on(type, listener) {
-    return this._on(type, listener, original => void listener({ target: this, original }))
-  }
-
-  off(type, listener) {
-    if (this._eventData.has(type)) {
-      const listenerData = this._eventData.get(type)
-
-      if (listenerData.has(listener)) {
-        this._element.removeEventListener(type, listenerData.get(listener))
-        listenerData.delete(listener)
-
-        if (!listenerData.size) {
-          this._eventData.delete(type)
+        if (!Sharq._isWindow(target)) {
+          target.textContent = v
         }
       }
     }
@@ -141,14 +188,188 @@ export class Sharq {
     return this
   }
 
+  value(value = void undefined) {
+    if (typeof value === 'undefined') {
+      const results = []
+
+      for (const target of this) {
+        results.push(Sharq._isWindow(target) ? void undefined : target.value)
+      }
+
+      return results.length === 1 ? results[0] : results
+    }
+
+    if (typeof value === 'string') {
+      for (const target of this) {
+        if (!Sharq._isWindow(target)) {
+          target.value = value
+        }
+      }
+    } else if (Sharq._isIterable(value)) {
+      let i = 0
+
+      for (const v of value) {
+        const target = this[i++]
+
+        if (!target) {
+          break
+        }
+
+        if (!Sharq._isWindow(target)) {
+          target.value = v
+        }
+      }
+    }
+
+    return this
+  }
+
+  prop(propertiesOrPropertyName) {
+    if (typeof propertiesOrPropertyName === 'string') {
+      const results = []
+
+      for (const target of this) {
+        results.push(target[propertiesOrPropertyName])
+      }
+
+      return results.length === 1 ? results[0] : results
+    }
+
+    for (const [k, v] of Object.entries(propertiesOrPropertyName)) {
+      for (const target of this) {
+        target[k] = v
+      }
+    }
+
+    return this
+  }
+
+  attr(attributesOrQualifiedName) {
+    if (typeof attributesOrQualifiedName === 'string') {
+      const results = []
+
+      for (const target of this) {
+        results.push(target.getAttribute(attributesOrQualifiedName))
+      }
+
+      return results.length === 1 ? results[0] : results
+    }
+
+    for (const v of Object.entries(attributesOrQualifiedName)) {
+      for (const target of this) {
+        target.setAttribute(...v)
+      }
+    }
+
+    return this
+  }
+
+  style(styles) {
+    for (const [k, v] of Object.entries(styles)) {
+      for (const target of this) {
+        target.style[k] = v
+      }
+    }
+
+    return this
+  }
+
+  _eventTargets = new Map
+
+  _on(target, type, listener, wrapListener) {
+    if (!this._eventTargets.has(target)) {
+      this._eventTargets.set(target, new Map)
+    }
+
+    const eventTypes = this._eventTargets.get(target)
+
+    if (!eventTypes.has(type)) {
+      eventTypes.set(type, new Map)
+    }
+
+    const eventListeners = eventTypes.get(type)
+
+    if (!eventListeners.has(listener)) {
+      eventListeners.set(listener, wrapListener)
+    }
+
+    target.addEventListener(type, eventListeners.get(listener))
+
+    return this
+  }
+
+  _off(target, type, listener) {
+    if (this._eventTargets.has(target)) {
+      const eventTypes = this._eventTargets.get(target)
+
+      if (eventTypes.has(type)) {
+        const eventListeners = eventTypes.get(type)
+
+        if (eventListeners.has(listener)) {
+          const wrapListener = eventListeners.get(listener)
+
+          target.removeEventListener(type, wrapListener)
+
+          eventListeners.delete(listener)
+        }
+
+        if (!eventListeners.size) {
+          eventTypes.delete(type)
+        }
+      }
+
+      if (!eventTypes.size) {
+        this._eventTargets.delete(target)
+      }
+    }
+
+    return this
+  }
+
+  once(type, listener) {
+    for (const target of this) {
+      this._on(target, type, listener, original => {
+        this._off(target, type, listener)
+
+        return listener({ target: this, original })
+      })
+    }
+
+    return this
+  }
+
+  on(type, listener) {
+    for (const target of this) {
+      this._on(target, type, listener, original => listener({ target: this, original }))
+    }
+
+    return this
+  }
+
+  off(type, listener) {
+    for (const target of this) {
+      this._off(target, type, listener)
+    }
+
+    return this
+  }
+
   click() {
-    this._element.click()
+    for (const target of this) {
+      if (target instanceof HTMLElement) {
+        target.click()
+      }
+    }
 
     return this
   }
 
   focus(options = void undefined) {
-    this._element.focus(options)
+    for (const target of this) {
+      if (target instanceof HTMLElement) {
+        target.focus(options)
+      }
+    }
 
     return this
   }
