@@ -1,15 +1,3 @@
-export class SharqStore extends Map {
-  constructor(target) {
-    super()
-
-    this._target = target
-  }
-
-  close() {
-    return this._target
-  }
-}
-
 export class Sharq extends Array {
   static _HTML_STRING_MATCH = /^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i
   static _CSS_ID_SELECTOR = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]+))$/
@@ -17,7 +5,7 @@ export class Sharq extends Array {
   constructor(selector = void undefined) {
     super()
 
-    this._store = new SharqStore(this)
+    this._storeData = new Sharq.SharqStoreData(this)
 
     if (typeof selector === 'undefined') {
       return this
@@ -41,7 +29,7 @@ export class Sharq extends Array {
           this.push(element)
         }
       }
-    } else if (Sharq._isIterable(selector)) {
+    } else if (Sharq.SharqUtil.isIterable(selector)) {
       for (const target of selector) {
         this.push(target)
       }
@@ -50,48 +38,26 @@ export class Sharq extends Array {
     }
   }
 
-  static _isIterable(obj) {
-    return typeof obj?.[Symbol.iterator] === 'function'
+  static SharqUtil = {
+    isIterable(arg) {
+      return typeof arg?.[Symbol.iterator] === 'function'
+    }
   }
 
-  static _isWindow(obj) {
-    return typeof obj !== 'undefined' && obj?.window === obj
+  static SharqStoreData = class SharqStoreData extends Map {
+    constructor(target) {
+      super()
+
+      this._target = target
+    }
+
+    getSharq() {
+      return this._target
+    }
   }
 
-  store() {
-    return this._store
-  }
-
-  storeSize() {
-    return this._store.size
-  }
-
-  storeClear() {
-    this._store.clear()
-
-    return this
-  }
-
-  storeDelete(key) {
-    this._store.delete(key)
-
-    return this
-  }
-
-  storeGet(key) {
-    this._store.get(key)
-
-    return this
-  }
-
-  storeHas(key) {
-    return this._store.has(key)
-  }
-
-  storeSet(key, value) {
-    this._store.set(key, value)
-
-    return this
+  getStore() {
+    return this._storeData
   }
 
   do(func) {
@@ -108,43 +74,89 @@ export class Sharq extends Array {
     return new Sharq(this[index])
   }
 
-  to(targetNode, type = 'append') {
-    if (type === 'append' || type === 'prepend' || type === 'before' || type === 'after') {
-      for (const target of this) {
-        targetNode[type](target)
+  append(selector) {
+    const sharq = new Sharq(selector)
+
+    for (const target of this) {
+      for (const selectorTarget of sharq) {
+        target.append(selectorTarget.cloneNode(true))
       }
     }
 
     return this
   }
 
-  appendTo(parentNode) {
+  prepend(selector) {
+    const sharq = new Sharq(selector)
+
     for (const target of this) {
-      parentNode.append(target)
+      for (const selectorTarget of sharq) {
+        target.prepend(selectorTarget.cloneNode(true))
+      }
     }
 
     return this
   }
 
-  prependTo(parentNode) {
+  before(selector) {
+    const sharq = new Sharq(selector)
+
     for (const target of this) {
-      parentNode.prepend(target)
+      for (const selectorTarget of sharq) {
+        target.before(selectorTarget.cloneNode(true))
+      }
     }
 
     return this
   }
 
-  insertBefore(targetNode) {
+  after(selector) {
+    const sharq = new Sharq(selector)
+
     for (const target of this) {
-      targetNode.before(target)
+      for (const selectorTarget of sharq) {
+        target.after(selectorTarget.cloneNode(true))
+      }
     }
 
     return this
   }
 
-  insertAfter(targetNode) {
+  appendTo(selector) {
+    const sharq = new Sharq(selector)
+
     for (const target of this) {
-      targetNode.after(target)
+      sharq.append(target)
+    }
+
+    return this
+  }
+
+  appendTo(selector) {
+    const sharq = new Sharq(selector)
+
+    for (const target of this) {
+      sharq.prepend(target)
+    }
+
+    return this
+  }
+
+  insertBefore(selector) {
+    const sharq = new Sharq(selector)
+
+    for (const target of this) {
+      sharq.before(target)
+    }
+
+    return this
+  }
+
+  insertAfter(selector) {
+    const sharq = new Sharq(selector)
+
+    for (const target of this) {
+      sharq.after(target)
     }
 
     return this
@@ -155,7 +167,7 @@ export class Sharq extends Array {
       const results = []
 
       for (const target of this) {
-        results.push(Sharq._isWindow(target) ? void undefined : target.textContent)
+        results.push(target.textContent)
       }
 
       return results.length === 1 ? results[0] : results
@@ -163,11 +175,9 @@ export class Sharq extends Array {
 
     if (typeof value === 'string') {
       for (const target of this) {
-        if (!Sharq._isWindow(target)) {
-          target.textContent = value
-        }
+        target.textContent = value
       }
-    } else if (Sharq._isIterable(value)) {
+    } else if (Sharq.SharqUtil.isIterable(value)) {
       let i = 0
 
       for (const v of value) {
@@ -177,9 +187,7 @@ export class Sharq extends Array {
           break
         }
 
-        if (!Sharq._isWindow(target)) {
-          target.textContent = v
-        }
+        target.textContent = v
       }
     }
 
@@ -191,7 +199,7 @@ export class Sharq extends Array {
       const results = []
 
       for (const target of this) {
-        results.push(Sharq._isWindow(target) ? void undefined : target.value)
+        results.push(target.value)
       }
 
       return results.length === 1 ? results[0] : results
@@ -199,11 +207,9 @@ export class Sharq extends Array {
 
     if (typeof value === 'string') {
       for (const target of this) {
-        if (!Sharq._isWindow(target)) {
-          target.value = value
-        }
+        target.value = value
       }
-    } else if (Sharq._isIterable(value)) {
+    } else if (Sharq.SharqUtil.isIterable(value)) {
       let i = 0
 
       for (const v of value) {
@@ -213,9 +219,7 @@ export class Sharq extends Array {
           break
         }
 
-        if (!Sharq._isWindow(target)) {
-          target.value = v
-        }
+        target.value = v
       }
     }
 
@@ -272,62 +276,72 @@ export class Sharq extends Array {
     return this
   }
 
-  _eventTargets = new Map
-
-  _on(target, type, listener, wrapListener) {
-    if (!this._eventTargets.has(target)) {
-      this._eventTargets.set(target, new Map)
+  click() {
+    for (const target of this) {
+      target.click()
     }
 
-    const eventTypes = this._eventTargets.get(target)
+    return this
+  }
+
+  static _eventTargets = new Map
+
+  static _on(target, type, listener, wrapListener) {
+    if (!Sharq._eventTargets.has(target)) {
+      Sharq._eventTargets.set(target, new Map)
+    }
+
+    const eventTypes = Sharq._eventTargets.get(target)
 
     if (!eventTypes.has(type)) {
       eventTypes.set(type, new Map)
     }
 
-    const eventListeners = eventTypes.get(type)
+    const listeners = eventTypes.get(type)
 
-    if (!eventListeners.has(listener)) {
-      eventListeners.set(listener, wrapListener)
+    if (!listeners.has(listener)) {
+      listeners.set(listener, new Set)
     }
 
-    target.addEventListener(type, eventListeners.get(listener))
-
-    return this
+    for (const realListener of listeners.get(listener).add(wrapListener)) {
+      target.addEventListener(type, realListener)
+    }
   }
 
-  _off(target, type, listener) {
-    if (this._eventTargets.has(target)) {
-      const eventTypes = this._eventTargets.get(target)
+  static _off(target, type, listener) {
+    if (Sharq._eventTargets.has(target)) {
+      const eventTypes = Sharq._eventTargets.get(target)
 
       if (eventTypes.has(type)) {
-        const eventListeners = eventTypes.get(type)
+        const listeners = eventTypes.get(type)
 
-        if (eventListeners.has(listener)) {
-          const wrapListener = eventListeners.get(listener)
+        if (listeners.has(listener)) {
+          const wrapListeners = listeners.get(listener)
 
-          target.removeEventListener(type, wrapListener)
+          for (const realListener of wrapListeners) {
+            target.removeEventListener(type, realListener)
 
-          eventListeners.delete(listener)
+            wrapListeners.delete(realListener)
+          }
+
+          listeners.delete(listener)
         }
 
-        if (!eventListeners.size) {
+        if (!listeners.size) {
           eventTypes.delete(type)
         }
       }
 
       if (!eventTypes.size) {
-        this._eventTargets.delete(target)
+        Sharq._eventTargets.delete(target)
       }
     }
-
-    return this
   }
 
   once(type, listener) {
     for (const target of this) {
-      this._on(target, type, listener, original => {
-        this._off(target, type, listener)
+      Sharq._on(target, type, listener, original => {
+        Sharq._off(target, type, listener)
 
         return listener({ target: this, original })
       })
@@ -338,7 +352,7 @@ export class Sharq extends Array {
 
   on(type, listener) {
     for (const target of this) {
-      this._on(target, type, listener, original => listener({ target: this, original }))
+      Sharq._on(target, type, listener, original => listener({ target: this, original }))
     }
 
     return this
@@ -346,17 +360,7 @@ export class Sharq extends Array {
 
   off(type, listener) {
     for (const target of this) {
-      this._off(target, type, listener)
-    }
-
-    return this
-  }
-
-  click() {
-    for (const target of this) {
-      if (target instanceof HTMLElement) {
-        target.click()
-      }
+      Sharq._off(target, type, listener)
     }
 
     return this
@@ -364,9 +368,15 @@ export class Sharq extends Array {
 
   focus(options = void undefined) {
     for (const target of this) {
-      if (target instanceof HTMLElement) {
-        target.focus(options)
-      }
+      target.focus(options)
+    }
+
+    return this
+  }
+
+  blur() {
+    for (const target of this) {
+      target.blur()
     }
 
     return this
