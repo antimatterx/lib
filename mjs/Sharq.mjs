@@ -74,90 +74,72 @@ export class Sharq extends Array {
     return new Sharq(this[index])
   }
 
-  append(selector) {
+  _add(selector, type) {
     const sharq = new Sharq(selector)
 
-    for (const target of this) {
+    if (this.length > 1) {
+      for (const [i, target] of this.entries()) {
+        for (const selectorTarget of sharq) {
+          if (!i) {
+            target[type](selectorTarget)
+
+            continue
+          }
+
+          const clone = selectorTarget.cloneNode(true)
+
+          target[type](clone)
+
+          if (selector instanceof Sharq) {
+            selector.push(clone)
+          }
+        }
+      }
+    } else {
       for (const selectorTarget of sharq) {
-        target.append(selectorTarget.cloneNode(true))
+        this[0][type](selectorTarget)
       }
     }
 
     return this
+  }
+
+  append(selector) {
+    return this._add(selector, 'append')
   }
 
   prepend(selector) {
-    const sharq = new Sharq(selector)
-
-    for (const target of this) {
-      for (const selectorTarget of sharq) {
-        target.prepend(selectorTarget.cloneNode(true))
-      }
-    }
-
-    return this
+    return this._add(selector, 'prepend')
   }
 
   before(selector) {
-    const sharq = new Sharq(selector)
-
-    for (const target of this) {
-      for (const selectorTarget of sharq) {
-        target.before(selectorTarget.cloneNode(true))
-      }
-    }
-
-    return this
+    return this._add(selector, 'before')
   }
 
   after(selector) {
-    const sharq = new Sharq(selector)
-
-    for (const target of this) {
-      for (const selectorTarget of sharq) {
-        target.after(selectorTarget.cloneNode(true))
-      }
-    }
-
-    return this
+    return this._add(selector, 'after')
   }
 
   appendTo(selector) {
-    const sharq = new Sharq(selector)
-
-    for (const target of this) {
-      sharq.append(target)
-    }
+    new Sharq(selector).append(this)
 
     return this
   }
 
   prependTo(selector) {
-    const sharq = new Sharq(selector)
-
-    for (const target of this) {
-      sharq.prepend(target)
-    }
+    new Sharq(selector).prepend(this)
 
     return this
   }
 
   insertBefore(selector) {
-    const sharq = new Sharq(selector)
-
-    for (const target of this) {
-      sharq.before(target)
-    }
+    new Sharq(selector).before(this)
 
     return this
   }
 
   insertAfter(selector) {
-    const sharq = new Sharq(selector)
-
-    for (const target of this) {
-      sharq.after(target)
-    }
+    new Sharq(selector).after(this)
 
     return this
   }
